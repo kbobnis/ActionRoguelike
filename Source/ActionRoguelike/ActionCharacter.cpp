@@ -36,10 +36,16 @@ void AActionCharacter::MoveForward(float value)
 	AddMovementInput(GetActorForwardVector(), value);
 }
 
+void AActionCharacter::MoveSideways(float value)
+{
+	AddMovementInput(GetActorRightVector(), value);
+}
+
 // Called to bind functionality to input
 void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AActionCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("MoveSideways", this, &AActionCharacter::MoveSideways);
 }
