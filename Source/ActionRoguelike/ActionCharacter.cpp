@@ -4,6 +4,7 @@
 #include "ActionCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -14,9 +15,14 @@ AActionCharacter::AActionCharacter()
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
 	SpringArmComp->SetupAttachment(RootComponent);
+	SpringArmComp->bUsePawnControlRotation = true;
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false;
 }
 
 // Called when the game starts or when spawned
@@ -49,12 +55,21 @@ void AActionCharacter::Tick(float DeltaTime)
 
 void AActionCharacter::MoveForward(float value)
 {
-	AddMovementInput(GetActorForwardVector(), value);
+	FRotator controlRot = GetControlRotation();
+	controlRot.Pitch = 0;
+	controlRot.Roll = 0;
+	AddMovementInput(controlRot.Vector(), value);
 }
 
 void AActionCharacter::MoveSideways(float value)
 {
-	AddMovementInput(GetActorRightVector(), value);
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0;
+	ControlRot.Roll = 0;
+
+	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+
+	AddMovementInput(RightVector, value);
 }
 
 // Called to bind functionality to input
