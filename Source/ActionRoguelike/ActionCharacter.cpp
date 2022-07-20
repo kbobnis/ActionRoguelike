@@ -3,6 +3,7 @@
 
 #include "ActionCharacter.h"
 
+#include "ActionMagicProjectile.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -72,6 +73,21 @@ void AActionCharacter::MoveSideways(float value)
 	AddMovementInput(RightVector, value);
 }
 
+void AActionCharacter::PrimaryAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+	FRotator Direction = GetControlRotation();
+	Direction.Pitch = 0;
+
+	FTransform SpawnTM = FTransform(Direction, HandLocation);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
 // Called to bind functionality to input
 void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -81,4 +97,7 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &AActionCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AActionCharacter::Jump);
 }

@@ -15,6 +15,9 @@ UCLASS()
 class ACTIONROGUELIKE_API AActionCharacter : public ACharacter
 {
 	GENERATED_BODY()
+protected:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
 
 public:
 	// Sets default values for this character's properties
@@ -36,6 +39,7 @@ public:
 
 	void MoveForward(float value);
 	void MoveSideways(float value);
+	void PrimaryAttack();
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };
